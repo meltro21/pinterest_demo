@@ -12,6 +12,7 @@ class PicModel {
       required this.url,
       required this.thumbnailUrl});
 
+  //method that converts the map to PicModel object
   factory PicModel.fromJson(Map<String, dynamic> json) => PicModel(
         albumId: json["albumId"],
         id: json["id"],

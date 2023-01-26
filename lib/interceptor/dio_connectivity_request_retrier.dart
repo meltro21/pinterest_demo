@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
 class DioConnectivityRequestRetrier {
   final Dio dio;
@@ -11,15 +10,13 @@ class DioConnectivityRequestRetrier {
     required this.dio,
     required this.connectivity,
   });
-
+  //it will return a future containing the response of get request
   Future<Response> scheduleRequestRetry(RequestOptions requestOptions) async {
     late StreamSubscription streamSubscription;
     final responseCompleter = Completer<Response>();
 
     streamSubscription =
         connectivity.onConnectivityChanged.listen((connectivityResult) {
-      print('connectivity changed');
-      print('${requestOptions.path}');
       if (connectivityResult != ConnectivityResult.none) {
         streamSubscription.cancel();
         responseCompleter.complete(

@@ -22,22 +22,26 @@ class HomeController extends GetxController {
   //checks the status of the connectivity
   checkConnectivity() async {
     Connectivity networkConnectivity = Connectivity();
+    //listen to any changes to the connectivity and than notify the user
     networkConnectivity.onConnectivityChanged.listen((event) async {
       try {
+        //if connectivity change send request to address and check the response
         final result = await InternetAddress.lookup('example.com');
         offline.value = !result.isNotEmpty && result[0].rawAddress.isNotEmpty;
         if (once == true) {
+          //show snack bar to let user know of status
           Get.snackbar(
             'Back Online',
-            "Display the message here",
+            "Hurray! You are online",
             colorText: Colors.white,
-            backgroundColor: Colors.lightBlue,
+            backgroundColor: Colors.green,
             icon: const Icon(Icons.add_alert),
           );
         }
       } on SocketException catch (_) {
         once = true;
         offline.value = true;
+        //if ofline show the user ofline status
         Get.snackbar(
           'Offline',
           "You are offline",
@@ -46,13 +50,12 @@ class HomeController extends GetxController {
           icon: const Icon(Icons.add_alert),
         );
       }
-      print('status is $offline');
     });
   }
 
   //get data from the endpoint
   Future<void> getData() async {
-    print('start getData');
+    //show loader
     loading.value = true;
     List<PicModel> picsList = [];
     final response =
@@ -63,10 +66,12 @@ class HomeController extends GetxController {
           (response.data as List).map((x) => PicModel.fromJson(x)).toList();
       myPics.value = picsList;
     }
+    //hide loader
     loading.value = false;
     myPics.value = picsList;
   }
 
+  //initialize the interceptor that will listen to the error
   initializeInterceptor() {
     dio.interceptors.add(
       RetryOnConnectionChangeInterceptor(
